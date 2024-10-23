@@ -1,47 +1,36 @@
 <?php
 // Conexión a la base de datos
 $servername = "localhost";
-$username = "root"; // Cambia este valor si tienes un usuario distinto
-$password = ""; // Si tienes contraseña en tu MySQL, colócala aquí
+$username = "root";
+$password = "";
 $dbname = "base_psico";
 
-// Crear conexión
+// Crear la conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Verificar conexión
+// Verificar la conexión
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
 // Obtener la tabla seleccionada
-$tabla_seleccionada = isset($_POST['tabla']) ? $_POST['tabla'] : 'hoja1';
+$tabla = isset($_POST['tabla']) ? $_POST['tabla'] : 'hoja1';
 
-// Consulta a la tabla seleccionada
-$sql = "SELECT * FROM $tabla_seleccionada";
+// Consulta para obtener los datos de la tabla seleccionada
+$sql = "SELECT DNI, expediente FROM $tabla";
 $result = $conn->query($sql);
 
-// Mostrar datos en una tabla
 if ($result->num_rows > 0) {
     echo "<table>";
-    echo "<tr>";
+    echo "<tr><th>DNI</th><th>EXPEDIENTE</th></tr>"; // Modificación de los encabezados
 
-    // Mostrar encabezados de las columnas
-    while ($fieldinfo = $result->fetch_field()) {
-        echo "<th>" . $fieldinfo->name . "</th>";
-    }
-    echo "</tr>";
-
-    // Mostrar los datos
+    // Mostrar los datos en la tabla
     while ($row = $result->fetch_assoc()) {
-        echo "<tr>";
-        foreach ($row as $data) {
-            echo "<td>" . $data . "</td>";
-        }
-        echo "</tr>";
+        echo "<tr><td>" . $row['DNI'] . "</td><td>" . $row['expediente'] . "</td></tr>";
     }
     echo "</table>";
 } else {
-    echo "0 resultados encontrados";
+    echo "No se encontraron datos en la tabla seleccionada.";
 }
 
 // Cerrar la conexión
